@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  podsync:
+    container_name: podsync
+    image: mxpv/podsync:latest
+    restart: always
+    networks:
+      - caddy
+    labels:
+      caddy: podsync.imwzk.com
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+    volumes:
+      - podsync-data:/app/data/
+      - ./config.toml:/app/config.toml
+
+networks:
+  caddy:
+    external: true
+
+volumes:
+  podsync-data:

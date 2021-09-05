@@ -1,0 +1,77 @@
+version: "3"
+services:
+  miniflux:
+    image: miniflux/miniflux:latest
+    container_name: miniflux
+    restart: always
+    networks:
+      - caddy
+      - miniflux_network
+    # for Caddy to automatically find this service
+    labels:
+      caddy: reader.imwzk.com
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://miniflux:secret@db/miniflux?sslmode=disable
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=1
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=password
+      - BASE_URL=https://reader.imwzk.com
+      - LOG_DATE_TIME=1
+  db:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    networks:
+      - miniflux_network
+    environment:
+      - POSTGRES_USER=miniflux
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - miniflux-db:/var/lib/postgresql/data
+  rsshub:
+    image: diygod/rsshub
+    container_name: rsshub
+    restart: always
+    networks:
+      - caddy
+      - rsshub_network
+    labels:
+      caddy: rsshub.imwzk.com
+      caddy.reverse_proxy: "{{upstreams 1200}}"
+    environment:
+      NODE_ENV: production
+      DEBUG_INFO: 0
+      CACHE_TYPE: redis
+      REDIS_URL: "redis://redis:6379/"
+      PUPPETEER_WS_ENDPOINT: "ws://browserless:3000"
+    depends_on:
+      - redis
+      - browserless
+  browserless:
+    image: browserless/chrome
+    container_name: browserless
+    restart: always
+    networks:
+      - rsshub_network
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    networks:
+      - rsshub_network
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+  miniflux-db:
+
+networks:
+  caddy:
+    external: true
+  miniflux_network:
+  rsshub_network:
