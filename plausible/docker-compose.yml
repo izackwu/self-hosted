@@ -8,6 +8,7 @@ services:
 
   plausible_db:
     image: postgres:12
+    restart: always
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
@@ -17,6 +18,7 @@ services:
 
   plausible_events_db:
     image: yandex/clickhouse-server:21.3.2.5
+    restart: always
     networks:
       - plausible_network
     volumes:
@@ -31,6 +33,7 @@ services:
   plausible:
     image: plausible/analytics:latest
     command: sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run"
+    restart: always
     networks:
       - plausible_network
       - caddy
