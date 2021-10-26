@@ -21,8 +21,9 @@ services:
       - ADMIN_PASSWORD=password
       - BASE_URL=https://reader.imwzk.com
       - LOG_DATE_TIME=1
+      - HTTP_CLIENT_TIMEOUT=120
   db:
-    image: postgres:latest
+    image: postgres:13-alpine
     container_name: postgres
     restart: always
     networks:
