@@ -9,7 +9,8 @@ services:
       - miniflux_network
     # for Caddy to automatically find this service
     labels:
-      caddy: reader.imwzk.com
+      caddy: reader.zackwu.com
+      caddy.tls: internal
       caddy.reverse_proxy: "{{upstreams 8080}}"
     depends_on:
       - db
@@ -19,7 +20,7 @@ services:
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=password
-      - BASE_URL=https://reader.imwzk.com
+      - BASE_URL=https://reader.zackwu.com
       - LOG_DATE_TIME=1
       - HTTP_CLIENT_TIMEOUT=120
   db:
@@ -41,7 +42,8 @@ services:
       - caddy
       - rsshub_network
     labels:
-      caddy: rsshub.imwzk.com
+      caddy: rsshub.zackwu.com
+      caddy.tls: internal
       caddy.reverse_proxy: "{{upstreams 1200}}"
     environment:
       NODE_ENV: production

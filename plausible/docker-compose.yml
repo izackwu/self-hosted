@@ -38,7 +38,8 @@ services:
       - plausible_network
       - caddy
     labels:
-      caddy: plausible.imwzk.com
+      caddy: plausible.zackwu.com
+      caddy.tls: internal # behind cloudflare
       caddy.reverse_proxy: "{{upstreams 8000}}"
       caddy.rewrite: /js/index.js /js/plausible.js
     depends_on:

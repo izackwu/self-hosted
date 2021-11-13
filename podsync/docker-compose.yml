@@ -8,7 +8,8 @@ services:
     networks:
       - caddy
     labels:
-      caddy: podsync.imwzk.com
+      caddy: podsync.zackwu.com
+      caddy.tls: internal
       caddy.reverse_proxy: "{{upstreams 8080}}"
     volumes:
       - podsync-data:/app/data/
